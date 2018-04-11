@@ -1,0 +1,35 @@
+Content:
+    nitrogen:
+        root_dir: doc/content
+
+Renderer:
+    type: MooseDocs.base.MaterializeRenderer
+    name: nitrogen
+    repo: https://hpcgitlab.inl.gov/idaholab/nitorgen
+    home: https://hpcsc.inl.gov/ssl/nitrogen/site/index.html
+    navigation:
+        Developers:
+            Workflow: workflow.md
+            Build Status: https://moosebuild.inl.gov/repo/221/
+            Systems: documentation/systems/index.md
+
+Extensions:
+    appsyntax:
+        type: MooseDocs.extensions.appsyntax
+        executable: ${ROOT_DIR}
+        hide:
+            framework: !include ${MOOSE_DIR}/framework/doc/hidden.yml
+            fluid_properties: !include ${MOOSE_DIR}/modules/fluid_properties/doc/hidden.yml
+        includes:
+            - include
+            - ${MOOSE_DIR}/framework/include
+            - ${MOOSE_DIR}/modules/fluid_properties/include
+        remove:
+            framework: !include ${MOOSE_DIR}/framework/doc/remove.yml
+    globals:
+        type: MooseDocs.extensions.panoptic
+        shortcuts:
+            framework: !include ${MOOSE_DIR}/framework/doc/globals.yml
+    acronyms:
+        type: MooseDocs.extensions.acronym
+        acronyms: !include ${MOOSE_DIR}/framework/doc/acronyms.yml

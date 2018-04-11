@@ -1,0 +1,54 @@
+#
+# build libSBTL_Nitrogen using libMesh's build system
+#
+LIBSBTL_NITROGEN_DIR       := $(NITROGEN_DIR)/contrib/libSBTL_Nitrogen
+
+LIBSBTL_NITROGEN_srcfiles  :=
+LIBSBTL_NITROGEN_srcfiles  += $(LIBSBTL_NITROGEN_DIR)/CP_VU_N2.cpp
+LIBSBTL_NITROGEN_srcfiles  += $(LIBSBTL_NITROGEN_DIR)/CV_VU_N2.cpp
+LIBSBTL_NITROGEN_srcfiles  += $(LIBSBTL_NITROGEN_DIR)/ETA_VU_N2.cpp
+LIBSBTL_NITROGEN_srcfiles  += $(LIBSBTL_NITROGEN_DIR)/G_VU_N2.cpp
+LIBSBTL_NITROGEN_srcfiles  += $(LIBSBTL_NITROGEN_DIR)/HS_FLASH.cpp
+LIBSBTL_NITROGEN_srcfiles  += $(LIBSBTL_NITROGEN_DIR)/HV_FLASH.cpp
+LIBSBTL_NITROGEN_srcfiles  += $(LIBSBTL_NITROGEN_DIR)/LAMBDA_VU_N2.cpp
+#LIBSBTL_NITROGEN_srcfiles  += $(LIBSBTL_NITROGEN_DIR)/LibSBTL_vu_N2.cpp
+LIBSBTL_NITROGEN_srcfiles  += $(LIBSBTL_NITROGEN_DIR)/P_VU_N2.cpp
+LIBSBTL_NITROGEN_srcfiles  += $(LIBSBTL_NITROGEN_DIR)/PH_FLASH.cpp
+LIBSBTL_NITROGEN_srcfiles  += $(LIBSBTL_NITROGEN_DIR)/PS_FLASH.cpp
+LIBSBTL_NITROGEN_srcfiles  += $(LIBSBTL_NITROGEN_DIR)/PT_FLASH.cpp
+LIBSBTL_NITROGEN_srcfiles  += $(LIBSBTL_NITROGEN_DIR)/S_VU_N2.cpp
+LIBSBTL_NITROGEN_srcfiles  += $(LIBSBTL_NITROGEN_DIR)/T_VU_N2.cpp
+LIBSBTL_NITROGEN_srcfiles  += $(LIBSBTL_NITROGEN_DIR)/U_VH_N2_INI.cpp
+LIBSBTL_NITROGEN_srcfiles  += $(LIBSBTL_NITROGEN_DIR)/U_VP_N2.cpp
+LIBSBTL_NITROGEN_srcfiles  += $(LIBSBTL_NITROGEN_DIR)/VU_HP_N2_INI.cpp
+LIBSBTL_NITROGEN_srcfiles  += $(LIBSBTL_NITROGEN_DIR)/VU_N2.cpp
+LIBSBTL_NITROGEN_srcfiles  += $(LIBSBTL_NITROGEN_DIR)/VU_SH_N2_INI.cpp
+LIBSBTL_NITROGEN_srcfiles  += $(LIBSBTL_NITROGEN_DIR)/VU_SP_N2_INI.cpp
+LIBSBTL_NITROGEN_srcfiles  += $(LIBSBTL_NITROGEN_DIR)/VU_TP_N2_INI.cpp
+LIBSBTL_NITROGEN_srcfiles  += $(LIBSBTL_NITROGEN_DIR)/W_VU_N2.cpp
+
+LIBSBTL_NITROGEN_objects   := $(patsubst %.cpp, %.$(obj-suffix), $(LIBSBTL_NITROGEN_srcfiles))
+LIBSBTL_NITROGEN_deps      := $(patsubst %.$(obj-suffix), %.$(obj-suffix).d, $(LIBSBTL_NITROGEN_objects))
+LIBSBTL_NITROGEN_LIB       := $(LIBSBTL_NITROGEN_DIR)/libSBTL_Nitrogen-$(METHOD).la
+
+app_INCLUDES += -I$(LIBSBTL_NITROGEN_DIR)
+app_LIBS += $(LIBSBTL_NITROGEN_LIB)
+
+$(LIBSBTL_NITROGEN_LIB): $(LIBSBTL_NITROGEN_objects)
+	@echo "Linking Library "$@"..."
+	@$(libmesh_LIBTOOL) --tag=CC $(LIBTOOLFLAGS) --mode=link --quiet \
+	  $(libmesh_CC) $(libmesh_CFLAGS) -o $@ $(LIBSBTL_NITROGEN_objects) $(libmesh_LDFLAGS) $(EXTERNAL_FLAGS) -rpath $(LIBSBTL_NITROGEN_DIR)
+	@$(libmesh_LIBTOOL) --mode=install --quiet install -c $(LIBSBTL_NITROGEN_LIB) $(LIBSBTL_NITROGEN_DIR)
+
+$(app_EXEC): $(LIBSBTL_NITROGEN_LIB)
+
+-include $(LIBSBTL_NITROGEN_deps)
+
+cleanlibsbtl_nitrogen:
+	@echo "Cleaning libSBTL_Nitrogen"
+	@rm -f $(LIBSBTL_NITROGEN_objects)
+	@rm -f $(LIBSBTL_NITROGEN_deps)
+	@rm -f $(LIBSBTL_NITROGEN_LIB)
+	@rm -f $(LIBSBTL_NITROGEN_DIR)/libSBTL_Nitrogen-$(METHOD)*.dylib
+	@rm -f $(LIBSBTL_NITROGEN_DIR)/libSBTL_Nitrogen-$(METHOD)*.so*
+	@rm -f $(LIBSBTL_NITROGEN_DIR)/libSBTL_Nitrogen-$(METHOD)*.a

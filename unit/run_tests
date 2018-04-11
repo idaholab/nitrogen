@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# If $METHOD is not set, use opt
+if [ -z $METHOD ]; then
+  export METHOD=opt
+fi
+
+if [ -e ./unit/nitrogen-unit-$METHOD ]
+then
+  ./unit/nitrogen-unit-$METHOD
+elif [ -e ./nitrogen-unit-$METHOD ]
+then
+  ./nitrogen-unit-$METHOD
+else
+  echo "Executable missing!"
+  exit 1
+fi
