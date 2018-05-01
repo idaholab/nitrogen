@@ -61,12 +61,14 @@ extern "C" void DIFF_W_VU_N2(
 extern "C" void
 DIFF_U_VP_N2(double v, double p, double & u, double & dudv_p, double & dudp_v, double & dpdv_u);
 
+registerMooseObject("NitrogenApp", NitrogenFluidProperties);
+
 template <>
 InputParameters
 validParams<NitrogenFluidProperties>()
 {
   InputParameters params = validParams<SinglePhaseFluidProperties>();
-  params.addClassDescription("Fluid properties of nirtogen (gas phase).");
+  params.addClassDescription("Fluid properties of nitrogen (gas phase).");
   return params;
 }
 
