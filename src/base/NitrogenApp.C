@@ -21,6 +21,8 @@ validParams<NitrogenApp>()
 NitrogenApp::NitrogenApp(InputParameters parameters)
   : MooseApp(parameters)
 {
+  Moose::registerObjects(_factory);
+  FluidPropertiesApp::registerObjects(_factory);
   NitrogenApp::registerObjects(_factory);
 
   FluidPropertiesApp::associateSyntax(_syntax, _action_factory);
@@ -48,5 +50,5 @@ NitrogenApp__registerObjects(Factory & factory)
 void
 NitrogenApp::registerObjects(Factory & factory)
 {
-  registerUserObject(NitrogenFluidProperties);
+  Registry::registerObjectsTo(factory, {"NitrogenApp"});
 }
