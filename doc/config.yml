@@ -5,7 +5,7 @@ Content:
 Renderer:
     type: MooseDocs.base.MaterializeRenderer
     name: nitrogen
-    repo: https://hpcgitlab.inl.gov/idaholab/nitorgen
+    repo: https://hpcgitlab.inl.gov/idaholab/nitrogen
     home: https://hpcsc.inl.gov/ssl/nitrogen/site/index.html
     navigation:
         Developers:
