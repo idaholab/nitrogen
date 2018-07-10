@@ -10,8 +10,7 @@ Renderer:
     navigation:
         Developers:
             Workflow: workflow.md
-            Build Status: https://moosebuild.inl.gov/repo/221/
-            Systems: documentation/systems/index.md
+            Build Status: https://moosebuild.inl.gov/repo/268/
 
 Extensions:
     appsyntax:
