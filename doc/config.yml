@@ -6,11 +6,11 @@ Renderer:
     type: MooseDocs.base.MaterializeRenderer
     name: nitrogen
     repo: https://hpcgitlab.inl.gov/idaholab/nitrogen
-    home: https://hpcsc.inl.gov/ssl/nitrogen/site/index.html
+    home: https://hpcsc.inl.gov/ssl/NITROGEN/site/index.html
     navigation:
         Developers:
             Workflow: workflow.md
-            Build Status: https://moosebuild.inl.gov/repo/268/
+            Build Status: https://moosebuild.inl.gov/repo/idaholab/nitrogen
 
 Extensions:
     appsyntax:
