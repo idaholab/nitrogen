@@ -18,8 +18,7 @@ validParams<NitrogenApp>()
   return params;
 }
 
-NitrogenApp::NitrogenApp(InputParameters parameters)
-  : MooseApp(parameters)
+NitrogenApp::NitrogenApp(InputParameters parameters) : MooseApp(parameters)
 {
   Moose::registerObjects(_factory);
   FluidPropertiesApp::registerObjects(_factory);

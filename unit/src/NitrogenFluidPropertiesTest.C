@@ -78,7 +78,7 @@ TEST_F(NitrogenFluidPropertiesTest, test)
   DERIV_TEST(_fp->s_from_h_p, h, p, REL_TOL_DERIVATIVE);
 
   // g
-  const Real g=_fp->g_from_v_e(v, e);
+  const Real g = _fp->g_from_v_e(v, e);
   REL_TEST(g, -2392346.8187611583, REL_TOL_EXTERNAL_VALUE);
   // TODO: REL_TEST(g, g_saved, REL_TOL_SAVED_VALUE);
 
