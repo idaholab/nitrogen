@@ -5,31 +5,27 @@ extern "C" double P_VU_N2(double v, double u);
 extern "C" double T_VU_N2(double v, double u);
 extern "C" int PT_FLASH_N2(double p, double t, double & v, double & vt, double & u);
 extern "C" int PT_FLASH_DERIV_N2(double p,
-                                double t,
-                                double & v,
-                                double & vt,
-                                double & dvdp_t,
-                                double & dvdt_p,
-                                double & dpdt_v,
-                                double & u,
-                                double & dudp_t,
-                                double & dudt_p,
-                                double & dpdt_u);
-extern "C" int PH_FLASH_N2(double p,
-                           double h,
-                           double & v,
-                           double & vt,
-                           double & u);
+                                 double t,
+                                 double & v,
+                                 double & vt,
+                                 double & dvdp_t,
+                                 double & dvdt_p,
+                                 double & dpdt_v,
+                                 double & u,
+                                 double & dudp_t,
+                                 double & dudt_p,
+                                 double & dpdt_u);
+extern "C" int PH_FLASH_N2(double p, double h, double & v, double & vt, double & u);
 extern "C" int PS_FLASH_N2(double p, double s, double & v, double & vt, double & u);
 extern "C" void PS_FLASH_DERIV_N2(double v,
-                                 double vt,
-                                 double u,
-                                 double & dvdp_s,
-                                 double & dvds_p,
-                                 double & dpds_v,
-                                 double & dudp_s,
-                                 double & duds_p,
-                                 double & dpds_u);
+                                  double vt,
+                                  double u,
+                                  double & dvdp_s,
+                                  double & dvds_p,
+                                  double & dpds_v,
+                                  double & dudp_s,
+                                  double & duds_p,
+                                  double & dpds_u);
 extern "C" double W_VU_N2(double v, double u);
 extern "C" double CP_VU_N2(double v, double u);
 extern "C" double CV_VU_N2(double v, double u);
@@ -40,24 +36,24 @@ extern "C" double S_VU_N2(double v, double u);
 extern "C" double G_VU_N2(double v, double e);
 extern "C" int HS_FLASH_N2(double h, double s, double & v, double & vt, double & u);
 extern "C" void HS_FLASH_DERIV_N2(double v,
-                                 double vt,
-                                 double u,
-                                 double & dvdh_s,
-                                 double & dvds_h,
-                                 double & dhds_v,
-                                 double & dudh_s,
-                                 double & duds_h,
-                                 double & dhds_u);
+                                  double vt,
+                                  double u,
+                                  double & dvdh_s,
+                                  double & dvds_h,
+                                  double & dhds_v,
+                                  double & dudh_s,
+                                  double & duds_h,
+                                  double & dhds_u);
 extern "C" int FLASH_VH_N2(double v, double h, double & u);
 // SBTL functions with derivatives
-extern "C" void DIFF_P_VU_N2(
-    double v, double u, double & p, double & dpdv, double & dpdu, double & dudv);
-extern "C" void DIFF_T_VU_N2(
-    double v, double u, double & t, double & dtdv, double & dtdu, double & dudv);
-extern "C" void DIFF_S_VU_N2(
-    double v, double u, double & s, double & dsdv, double & dsdu, double & dudv);
-extern "C" void DIFF_W_VU_N2(
-    double v, double u, double & c, double & dcdv, double & dcdu, double & dudv);
+extern "C" void
+DIFF_P_VU_N2(double v, double u, double & p, double & dpdv, double & dpdu, double & dudv);
+extern "C" void
+DIFF_T_VU_N2(double v, double u, double & t, double & dtdv, double & dtdu, double & dudv);
+extern "C" void
+DIFF_S_VU_N2(double v, double u, double & s, double & dsdv, double & dsdu, double & dudv);
+extern "C" void
+DIFF_W_VU_N2(double v, double u, double & c, double & dcdv, double & dcdu, double & dudv);
 extern "C" void
 DIFF_U_VP_N2(double v, double p, double & u, double & dudv_p, double & dudp_v, double & dpdv_u);
 
@@ -73,11 +69,7 @@ validParams<NitrogenFluidProperties>()
 }
 
 NitrogenFluidProperties::NitrogenFluidProperties(const InputParameters & parameters)
-  : SinglePhaseFluidProperties(parameters),
-  _to_MPa(1e-6),
-  _to_Pa(1e6),
-  _to_kJ(1e-3),
-  _to_J(1e3)
+  : SinglePhaseFluidProperties(parameters), _to_MPa(1e-6), _to_Pa(1e6), _to_kJ(1e-3), _to_J(1e3)
 {
 }
 
@@ -88,8 +80,7 @@ NitrogenFluidProperties::p_from_v_e(Real v, Real e) const
 }
 
 void
-NitrogenFluidProperties::p_from_v_e(
-    Real v, Real e, Real & p, Real & dp_dv, Real & dp_de) const
+NitrogenFluidProperties::p_from_v_e(Real v, Real e, Real & p, Real & dp_dv, Real & dp_de) const
 {
   e *= _to_kJ;
 
@@ -108,8 +99,7 @@ NitrogenFluidProperties::T_from_v_e(Real v, Real e) const
 }
 
 void
-NitrogenFluidProperties::T_from_v_e(
-    Real v, Real e, Real & T, Real & dT_dv, Real & dT_de) const
+NitrogenFluidProperties::T_from_v_e(Real v, Real e, Real & T, Real & dT_dv, Real & dT_de) const
 {
   e *= _to_kJ;
 
@@ -248,8 +238,8 @@ NitrogenFluidProperties::rho_from_p_T(
 {
   double v, vt, dv_dp, dv_dT, dp_dT_v;
   double e, de_dp, de_dT, dp_dT_e;
-  const unsigned int ierr = PT_FLASH_DERIV_N2(
-      p * _to_MPa, T, v, vt, dv_dp, dv_dT, dp_dT_v, e, de_dp, de_dT, dp_dT_e);
+  const unsigned int ierr =
+      PT_FLASH_DERIV_N2(p * _to_MPa, T, v, vt, dv_dp, dv_dT, dp_dT_v, e, de_dp, de_dT, dp_dT_e);
   if (ierr != I_OK)
   {
     v = NAN;
@@ -306,13 +296,12 @@ NitrogenFluidProperties::h_from_p_T(Real p, Real T) const
 }
 
 void
-NitrogenFluidProperties::h_from_p_T(
-    Real p, Real T, Real & h, Real & dh_dp, Real & dh_dT) const
+NitrogenFluidProperties::h_from_p_T(Real p, Real T, Real & h, Real & dh_dp, Real & dh_dT) const
 {
   double v, vt, dv_dp, dv_dT, dp_dT_v;
   double e, de_dp, de_dT, dp_dT_e;
-  const unsigned int ierr = PT_FLASH_DERIV_N2(
-      p * _to_MPa, T, v, vt, dv_dp, dv_dT, dp_dT_v, e, de_dp, de_dT, dp_dT_e);
+  const unsigned int ierr =
+      PT_FLASH_DERIV_N2(p * _to_MPa, T, v, vt, dv_dp, dv_dT, dp_dT_v, e, de_dp, de_dT, dp_dT_e);
   if (ierr != I_OK)
   {
     v = NAN;
@@ -377,11 +366,8 @@ NitrogenFluidProperties::rho_from_p_s(Real p, Real s) const
 }
 
 void
-NitrogenFluidProperties::rho_from_p_s(Real p,
-                                       Real s,
-                                       Real & rho,
-                                       Real & drho_dp,
-                                       Real & drho_ds) const
+NitrogenFluidProperties::rho_from_p_s(
+    Real p, Real s, Real & rho, Real & drho_dp, Real & drho_ds) const
 {
   double v, vt, e;
   const unsigned int ierr = PS_FLASH_N2(p * _to_MPa, s * _to_kJ, v, vt, e);
