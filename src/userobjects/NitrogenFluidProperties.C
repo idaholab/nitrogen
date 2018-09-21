@@ -26,12 +26,14 @@ extern "C" void PS_FLASH_DERIV_N2(double v,
                                   double & dudp_s,
                                   double & duds_p,
                                   double & dpds_u);
+extern "C" double S_VU_N2(double v, double u);
 extern "C" double W_VU_N2(double v, double u);
 extern "C" double CP_VU_N2(double v, double u);
 extern "C" double CV_VU_N2(double v, double u);
 extern "C" double ETA_VU_N2(double v, double u);
 extern "C" double LAMBDA_VU_N2(double v, double u);
 extern "C" double U_VP_N2(double v, double p);
+extern "C" double U_VT_N2(double v, double t);
 extern "C" double S_VU_N2(double v, double u);
 extern "C" double G_VU_N2(double v, double e);
 extern "C" int HS_FLASH_N2(double h, double s, double & v, double & vt, double & u);
@@ -281,6 +283,115 @@ NitrogenFluidProperties::e_from_p_rho(
 }
 
 Real
+NitrogenFluidProperties::e_from_T_v(Real T, Real v) const
+{
+  return U_VT_N2(v, T) * _to_J;
+}
+
+void
+NitrogenFluidProperties::e_from_T_v(Real T, Real v, Real & e, Real & de_dT, Real & de_dv) const
+{
+  double TT, dT_dv_e, dT_de_v, de_dv_T;
+
+  e = U_VT_N2(v, T);
+
+  DIFF_T_VU_N2(v, e, TT, dT_dv_e, dT_de_v, de_dv_T);
+
+  e *= _to_J;
+  de_dT = 1. / dT_de_v * _to_J;
+  de_dv = de_dv_T * _to_J;
+}
+
+Real
+NitrogenFluidProperties::p_from_T_v(Real T, Real v) const
+{
+  double e;
+  e = U_VT_N2(v, T);
+  return P_VU_N2(v, e) * _to_Pa;
+}
+
+void
+NitrogenFluidProperties::p_from_T_v(Real T, Real v, Real & p, Real & dp_dT, Real & dp_dv) const
+{
+  double e, dp_dv_e, dp_de_v, de_dv_p;
+  double TT, dT_dv_e, dT_de_v, de_dv_T;
+
+  e = U_VT_N2(v, T);
+  DIFF_P_VU_N2(v, e, p, dp_dv_e, dp_de_v, de_dv_p);
+  DIFF_T_VU_N2(v, e, TT, dT_dv_e, dT_de_v, de_dv_T);
+
+  p *= _to_Pa;
+  dp_dT = (dp_de_v / dT_de_v) * _to_Pa;
+  dp_dv = (dp_dv_e + dp_de_v * de_dv_T) * _to_Pa;
+}
+
+Real
+NitrogenFluidProperties::h_from_T_v(Real T, Real v) const
+{
+  double e, p;
+  e = U_VT_N2(v, T);
+  p = P_VU_N2(v, e);
+  return (e + p * v * 1.e3) * _to_J;
+}
+
+void
+NitrogenFluidProperties::h_from_T_v(Real T, Real v, Real & h, Real & dh_dT, Real & dh_dv) const
+{
+  double e, dp_dv_e, dp_de_v, de_dv_p;
+  double TT, dT_dv_e, dT_de_v, de_dv_T;
+  double p, dp_dT, dp_dv, de_dT, de_dv;
+
+  e = U_VT_N2(v, T);
+  DIFF_P_VU_N2(v, e, p, dp_dv_e, dp_de_v, de_dv_p);
+  DIFF_T_VU_N2(v, e, TT, dT_dv_e, dT_de_v, de_dv_T);
+  dp_dT = (dp_de_v / dT_de_v);
+  dp_dv = (dp_dv_e + dp_de_v * de_dv_T);
+  de_dT = 1. / dT_de_v;
+  de_dv = de_dv_T;
+
+  h = e + p * v * 1.e3;
+  dh_dT = de_dT + dp_dT * v * 1.e3;
+  dh_dv = de_dv + (dp_dv * v + p) * 1.e3;
+
+  h *= _to_J;
+  dh_dT *= _to_J;
+  dh_dv *= _to_J;
+}
+
+Real
+NitrogenFluidProperties::s_from_T_v(Real T, Real v) const
+{
+  double e;
+  e = U_VT_N2(v, T);
+  return S_VU_N2(v, e) * _to_J;
+}
+
+void
+NitrogenFluidProperties::s_from_T_v(Real T, Real v, Real & s, Real & ds_dT, Real & ds_dv) const
+{
+  double e, ds_dv_e, ds_de_v, de_dv_s;
+  double TT, dT_dv_e, dT_de_v, de_dv_T;
+
+  e = U_VT_N2(v, T);
+  DIFF_S_VU_N2(v, e, s, ds_dv_e, ds_de_v, de_dv_s);
+  DIFF_T_VU_N2(v, e, TT, dT_dv_e, dT_de_v, de_dv_T);
+  ds_dT = (ds_de_v / dT_de_v);
+  ds_dv = (ds_dv_e + ds_de_v * de_dv_T);
+
+  s *= _to_J;
+  ds_dT *= _to_J;
+  ds_dv *= _to_J;
+}
+
+Real
+NitrogenFluidProperties::cv_from_T_v(Real T, Real v) const
+{
+  double e;
+  e = U_VT_N2(v, T);
+  return CV_VU_N2(v, e) * _to_J;
+}
+
+Real
 NitrogenFluidProperties::h_from_p_T(Real p, Real T) const
 {
   double v, vt, e;
@@ -385,4 +496,10 @@ NitrogenFluidProperties::rho_from_p_s(
   double drho_dv = -1. / v / v;
   drho_dp = drho_dv * dv_dp / _to_Pa;
   drho_ds = drho_dv * dv_ds / _to_J;
+}
+
+Real
+NitrogenFluidProperties::molarMass() const
+{
+  return 0.02801348;
 }
