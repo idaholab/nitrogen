@@ -18,6 +18,8 @@ validParams<NitrogenApp>()
   return params;
 }
 
+registerKnownLabel("NitrogenApp");
+
 NitrogenApp::NitrogenApp(InputParameters parameters) : MooseApp(parameters)
 {
   Moose::registerObjects(_factory);
