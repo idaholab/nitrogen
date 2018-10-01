@@ -22,11 +22,7 @@ registerKnownLabel("NitrogenApp");
 
 NitrogenApp::NitrogenApp(InputParameters parameters) : MooseApp(parameters)
 {
-  Moose::registerObjects(_factory);
-  FluidPropertiesApp::registerObjects(_factory);
-  NitrogenApp::registerObjects(_factory);
-
-  FluidPropertiesApp::associateSyntax(_syntax, _action_factory);
+  NitrogenApp::registerAll(_factory, _action_factory, _syntax);
 }
 
 // External entry point for dynamic application loading
@@ -35,10 +31,27 @@ NitrogenApp__registerApps()
 {
   NitrogenApp::registerApps();
 }
+
 void
 NitrogenApp::registerApps()
 {
   registerApp(NitrogenApp);
+}
+
+// External entry point for dynamic application loading
+extern "C" void
+NitrogenApp__registerAll(Factory & f, ActionFactory & af, Syntax & s)
+{
+  NitrogenApp::registerAll(f, af, s);
+}
+
+void
+NitrogenApp::registerAll(Factory & f, ActionFactory & af, Syntax & s)
+{
+  Registry::registerObjectsTo(f, {"NitrogenApp"});
+  Registry::registerActionsTo(af, {"NitrogenApp"});
+
+  FluidPropertiesApp::registerAll(f, af, s);
 }
 
 // External entry point for dynamic object registration
@@ -51,5 +64,6 @@ NitrogenApp__registerObjects(Factory & factory)
 void
 NitrogenApp::registerObjects(Factory & factory)
 {
+  mooseDeprecated("NitrogenApp: use registerAll instead of registerObjects");
   Registry::registerObjectsTo(factory, {"NitrogenApp"});
 }
