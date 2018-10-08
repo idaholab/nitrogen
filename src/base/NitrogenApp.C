@@ -4,10 +4,7 @@
 #include "AppFactory.h"
 
 // Modules
-#include "FluidPropertiesApp.h"
-
-// Fluid properties
-#include "NitrogenFluidProperties.h"
+#include "ModulesApp.h"
 
 template <>
 InputParameters
@@ -51,19 +48,5 @@ NitrogenApp::registerAll(Factory & f, ActionFactory & af, Syntax & s)
   Registry::registerObjectsTo(f, {"NitrogenApp"});
   Registry::registerActionsTo(af, {"NitrogenApp"});
 
-  FluidPropertiesApp::registerAll(f, af, s);
-}
-
-// External entry point for dynamic object registration
-extern "C" void
-NitrogenApp__registerObjects(Factory & factory)
-{
-  NitrogenApp::registerObjects(factory);
-}
-
-void
-NitrogenApp::registerObjects(Factory & factory)
-{
-  mooseDeprecated("NitrogenApp: use registerAll instead of registerObjects");
-  Registry::registerObjectsTo(factory, {"NitrogenApp"});
+  ModulesApp::registerAll(f, af, s);
 }
