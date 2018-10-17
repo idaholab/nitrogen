@@ -87,8 +87,20 @@ TEST_F(NitrogenFluidPropertiesTest, test)
   REL_TEST(h_from_p_T, 408295.51853372215, REL_TOL_SAVED_VALUE);
   DERIV_TEST(_fp->h_from_p_T, p, T, REL_TOL_DERIVATIVE);
 
+  REL_TEST(_fp->e_from_T_v(T, v), e, REL_TOL_CONSISTENCY);
+  DERIV_TEST(_fp->e_from_T_v, T, v, REL_TOL_DERIVATIVE * 2.);
+  REL_TEST(_fp->p_from_T_v(T, v), p, REL_TOL_CONSISTENCY);
+  DERIV_TEST(_fp->p_from_T_v, T, v, REL_TOL_DERIVATIVE);
+  REL_TEST(_fp->h_from_T_v(T, v), h, REL_TOL_CONSISTENCY);
+  DERIV_TEST(_fp->h_from_T_v, T, v, REL_TOL_DERIVATIVE * 4.);
+  REL_TEST(_fp->s_from_T_v(T, v), s, REL_TOL_CONSISTENCY);
+  DERIV_TEST(_fp->s_from_T_v, T, v, REL_TOL_DERIVATIVE);
+  REL_TEST(_fp->cv_from_T_v(T, v), cv, REL_TOL_CONSISTENCY);
+
   // beta
   // const Real beta = _fp->beta_from_p_T(p, T);
   // TODO: REL_TEST(beta, beta_external, REL_TOL_EXTERNAL_VALUE);
   // TODO: REL_TEST(beta, beta_saved, REL_TOL_SAVED_VALUE);
+
+  REL_TEST(_fp->molarMass(), 0.02801348, REL_TOL_SAVED_VALUE);
 }
