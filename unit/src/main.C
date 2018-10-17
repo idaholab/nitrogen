@@ -7,11 +7,16 @@
 
 PerfLog Moose::perf_log("gtest");
 
+int my_argc;
+char ** my_argv;
+
 GTEST_API_ int
 main(int argc, char ** argv)
 {
   // gtest removes (only) its args from argc and argv - so this  must be before moose init
   testing::InitGoogleTest(&argc, argv);
+  my_argc = argc;
+  my_argv = argv;
 
   MooseInit init(argc, argv);
   registerApp(NitrogenApp);
