@@ -1,12 +1,12 @@
-#ifndef NITROGENFLUIDPROPERTIES_H
-#define NITROGENFLUIDPROPERTIES_H
+#ifndef NITROGENSBTLFLUIDPROPERTIES_H
+#define NITROGENSBTLFLUIDPROPERTIES_H
 
 #include "SinglePhaseFluidProperties.h"
 
-class NitrogenFluidProperties;
+class NitrogenSBTLFluidProperties;
 
 template <>
-InputParameters validParams<NitrogenFluidProperties>();
+InputParameters validParams<NitrogenSBTLFluidProperties>();
 
 /**
  * Properties of nitrogen according to Span et al. computed with the SBTL method
@@ -20,10 +20,10 @@ InputParameters validParams<NitrogenFluidProperties>();
  * - dynamic viscosity:  Pa-s
  * - conductivity:       W/m-K
  */
-class NitrogenFluidProperties : public SinglePhaseFluidProperties
+class NitrogenSBTLFluidProperties : public SinglePhaseFluidProperties
 {
 public:
-  NitrogenFluidProperties(const InputParameters & parameters);
+  NitrogenSBTLFluidProperties(const InputParameters & parameters);
 
   virtual Real p_from_v_e(Real v, Real e) const override;
   virtual void p_from_v_e(Real v, Real e, Real & p, Real & dp_dv, Real & dp_de) const override;
@@ -78,4 +78,4 @@ protected:
   const Real _to_J;
 };
 
-#endif /* NITROGENFLUIDPROPERTIES_H */
+#endif /* NITROGENSBTLFLUIDPROPERTIES_H */
