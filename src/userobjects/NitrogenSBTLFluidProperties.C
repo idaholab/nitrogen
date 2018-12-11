@@ -77,12 +77,18 @@ InputParameters
 validParams<NitrogenSBTLFluidProperties>()
 {
   InputParameters params = validParams<SinglePhaseFluidProperties>();
+  params += validParams<NaNInterface>();
   params.addClassDescription("Fluid properties of nitrogen (gas phase).");
   return params;
 }
 
 NitrogenSBTLFluidProperties::NitrogenSBTLFluidProperties(const InputParameters & parameters)
-  : SinglePhaseFluidProperties(parameters), _to_MPa(1e-6), _to_Pa(1e6), _to_kJ(1e-3), _to_J(1e3)
+  : SinglePhaseFluidProperties(parameters),
+    NaNInterface(this),
+    _to_MPa(1e-6),
+    _to_Pa(1e6),
+    _to_kJ(1e-3),
+    _to_J(1e3)
 {
 }
 
@@ -141,21 +147,36 @@ Real
 NitrogenSBTLFluidProperties::e_from_v_h(Real v, Real h) const
 {
   double e;
-  FLASH_VH_N2(v, h * _to_kJ, e);
-  return e * _to_J;
+  const unsigned int ierr = FLASH_VH_N2(v, h * _to_kJ, e);
+  if (ierr != I_OK)
+    return getNaN();
+  else
+    return e * _to_J;
 }
 
 void
 NitrogenSBTLFluidProperties::e_from_v_h(Real v, Real h, Real & e, Real & de_dv, Real & de_dh) const
 {
-  e = e_from_v_h(v, h);
+  const unsigned int ierr = FLASH_VH_N2(v, h * _to_kJ, e);
+  if (ierr != I_OK)
+  {
+    e = getNaN();
+    de_dv = getNaN();
+    de_dh = getNaN();
+  }
+  else
+  {
+    double p, dp_dv, dp_de, de_dv_p;
+    DIFF_P_VU_N2(v, e, p, dp_dv, dp_de, de_dv_p);
+    e *= _to_J;
+    p *= _to_Pa;
+    dp_dv *= _to_Pa;
+    dp_de *= _to_Pa / _to_J;
 
-  Real p, dp_dv, dp_de;
-  p_from_v_e(v, e, p, dp_dv, dp_de);
-
-  Real dv_dh = 1. / (p + dp_dv * v);
-  de_dh = 1. / (1. + dp_de * v);
-  de_dv = -de_dh / dv_dh;
+    Real dv_dh = 1. / (p + dp_dv * v);
+    de_dh = 1. / (1. + dp_de * v);
+    de_dv = -de_dh / dv_dh;
+  }
 }
 
 Real
@@ -202,24 +223,41 @@ Real
 NitrogenSBTLFluidProperties::s_from_h_p(Real h, Real p) const
 {
   double v, vt, e;
-  PH_FLASH_N2(p * _to_MPa, h * _to_kJ, v, vt, e);
-  return s_from_v_e(v, e * _to_J);
+  const unsigned int ierr = PH_FLASH_N2(p * _to_MPa, h * _to_kJ, v, vt, e);
+  if (ierr != I_OK)
+    return getNaN();
+  else
+    return S_VU_N2(v, e) * _to_J;
 }
 
 void
 NitrogenSBTLFluidProperties::s_from_h_p(Real h, Real p, Real & s, Real & ds_dh, Real & ds_dp) const
 {
   double v, vt, e;
-  PH_FLASH_N2(p * _to_MPa, h * _to_kJ, v, vt, e);
-  e *= _to_J;
-  Real dummy_p, dp_dv, dp_de;
-  p_from_v_e(v, e, dummy_p, dp_dv, dp_de);
-  Real dh_dv = (p + dp_dv * v);
-  Real dh_de = 1. + dp_de * v;
-  Real ds_dv, ds_de;
-  s_from_v_e(v, e, s, ds_dv, ds_de);
-  ds_dp = (ds_dv * dh_de - ds_de * dh_dv) / (dp_dv * dh_de - dp_de * dh_dv);
-  ds_dh = (ds_dv * dp_de - ds_de * dp_dv) / (dh_dv * dp_de - dh_de * dp_dv);
+  const unsigned int ierr = PH_FLASH_N2(p * _to_MPa, h * _to_kJ, v, vt, e);
+  if (ierr != I_OK)
+  {
+    s = getNaN();
+    ds_dh = getNaN();
+    ds_dp = getNaN();
+  }
+  else
+  {
+    double pp, dp_dv, dp_de, de_dv_p;
+    double ds_dv, ds_de, de_dv_s;
+    DIFF_P_VU_N2(v, e, pp, dp_dv, dp_de, de_dv_p);
+    DIFF_S_VU_N2(v, e, s, ds_dv, ds_de, de_dv_s);
+    e *= _to_J;
+    dp_dv *= _to_Pa;
+    dp_de *= _to_Pa / _to_J;
+    s *= _to_J;
+    ds_dv *= _to_J;
+    // ds_de *= _to_J / _to_J;
+    double dh_dv = (p + dp_dv * v);
+    double dh_de = 1. + dp_de * v;
+    ds_dp = (ds_dv * dh_de - ds_de * dh_dv) / (dp_dv * dh_de - dp_de * dh_dv);
+    ds_dh = (ds_dv * dp_de - ds_de * dp_dv) / (dh_dv * dp_de - dh_de * dp_dv);
+  }
 }
 
 Real
@@ -236,13 +274,9 @@ NitrogenSBTLFluidProperties::rho_from_p_T(Real p, Real T) const
   double v, vt, e;
   const unsigned int ierr = PT_FLASH_N2(p * _to_MPa, T, v, vt, e);
   if (ierr != I_OK)
-  {
-    v = NAN;
-    vt = NAN;
-    e = NAN;
-  }
-
-  return 1 / std::exp(vt);
+    return getNaN();
+  else
+    return 1. / v;
 }
 
 void
@@ -255,21 +289,17 @@ NitrogenSBTLFluidProperties::rho_from_p_T(
       PT_FLASH_DERIV_N2(p * _to_MPa, T, v, vt, dv_dp, dv_dT, dp_dT_v, e, de_dp, de_dT, dp_dT_e);
   if (ierr != I_OK)
   {
-    v = NAN;
-    vt = NAN;
-    dv_dp = NAN;
-    dv_dT = NAN;
-    dp_dT_v = NAN;
-    e = NAN;
-    de_dp = NAN;
-    de_dT = NAN;
-    dp_dT_e = NAN;
+    rho = getNaN();
+    drho_dp = getNaN();
+    drho_dT = getNaN();
   }
-
-  rho = 1. / v;
-  const double drho_dv = -1. / v / v;
-  drho_dp = drho_dv * dv_dp / _to_Pa;
-  drho_dT = drho_dv * dv_dT;
+  else
+  {
+    rho = 1. / v;
+    const double drho_dv = -1. / v / v;
+    drho_dp = drho_dv * dv_dp / _to_Pa;
+    drho_dT = drho_dv * dv_dT;
+  }
 }
 
 Real
@@ -408,13 +438,9 @@ NitrogenSBTLFluidProperties::h_from_p_T(Real p, Real T) const
   double v, vt, e;
   const unsigned int ierr = PT_FLASH_N2(p * _to_MPa, T, v, vt, e);
   if (ierr != I_OK)
-  {
-    v = NAN;
-    vt = NAN;
-    e = NAN;
-  }
-
-  return e * _to_J + p * v;
+    return getNaN();
+  else
+    return e * _to_J + p * v;
 }
 
 void
@@ -426,20 +452,16 @@ NitrogenSBTLFluidProperties::h_from_p_T(Real p, Real T, Real & h, Real & dh_dp, 
       PT_FLASH_DERIV_N2(p * _to_MPa, T, v, vt, dv_dp, dv_dT, dp_dT_v, e, de_dp, de_dT, dp_dT_e);
   if (ierr != I_OK)
   {
-    v = NAN;
-    vt = NAN;
-    dv_dp = NAN;
-    dv_dT = NAN;
-    dp_dT_v = NAN;
-    e = NAN;
-    de_dp = NAN;
-    de_dT = NAN;
-    dp_dT_e = NAN;
+    h = getNaN();
+    dh_dp = getNaN();
+    dh_dT = getNaN();
   }
-
-  h = e * _to_J + p * v;
-  dh_dp = de_dp * _to_J / _to_Pa + (v + p * _to_MPa * dv_dp);
-  dh_dT = de_dT * _to_J + p * dv_dT;
+  else
+  {
+    h = e * _to_J + p * v;
+    dh_dp = de_dp * _to_J / _to_Pa + (v + p * _to_MPa * dv_dp);
+    dh_dT = de_dT * _to_J + p * dv_dT;
+  }
 }
 
 Real
@@ -448,16 +470,9 @@ NitrogenSBTLFluidProperties::cp_from_p_T(Real p, Real T) const
   double v, vt, e;
   const unsigned int ierr = PT_FLASH_N2(p * _to_MPa, T, v, vt, e);
   if (ierr != I_OK)
-  {
-    v = NAN;
-    vt = NAN;
-    e = NAN;
-    return NAN;
-  }
+    return getNaN();
   else
-  {
     return CP_VU_N2(v, e) * _to_J;
-  }
 }
 
 Real
@@ -466,16 +481,9 @@ NitrogenSBTLFluidProperties::cv_from_p_T(Real p, Real T) const
   double v, vt, e;
   const unsigned int ierr = PT_FLASH_N2(p * _to_MPa, T, v, vt, e);
   if (ierr != I_OK)
-  {
-    v = NAN;
-    vt = NAN;
-    e = NAN;
-    return NAN;
-  }
+    return getNaN();
   else
-  {
     return CV_VU_N2(v, e) * _to_J;
-  }
 }
 
 Real
@@ -484,16 +492,9 @@ NitrogenSBTLFluidProperties::mu_from_p_T(Real p, Real T) const
   double v, vt, e;
   const unsigned int ierr = PT_FLASH_N2(p * _to_MPa, T, v, vt, e);
   if (ierr != I_OK)
-  {
-    v = NAN;
-    vt = NAN;
-    e = NAN;
-    return NAN;
-  }
+    return getNaN();
   else
-  {
     return ETA_VU_N2(v, e);
-  }
 }
 
 Real
@@ -502,16 +503,9 @@ NitrogenSBTLFluidProperties::k_from_p_T(Real p, Real T) const
   double v, vt, e;
   const unsigned int ierr = PT_FLASH_N2(p * _to_MPa, T, v, vt, e);
   if (ierr != I_OK)
-  {
-    v = NAN;
-    vt = NAN;
-    e = NAN;
-    return NAN;
-  }
+    return getNaN();
   else
-  {
     return LAMBDA_VU_N2(v, e);
-  }
 }
 
 void
@@ -523,18 +517,9 @@ NitrogenSBTLFluidProperties::k_from_p_T(Real p, Real T, Real & k, Real & dk_dp, 
       PT_FLASH_DERIV_N2(p * _to_MPa, T, v, vt, dv_dp, dv_dT, dp_dT_v, e, de_dp, de_dT, dp_dT_e);
   if (ierr != I_OK)
   {
-    v = NAN;
-    vt = NAN;
-    dv_dp = NAN;
-    dv_dT = NAN;
-    dp_dT_v = NAN;
-    e = NAN;
-    de_dp = NAN;
-    de_dT = NAN;
-    dp_dT_e = NAN;
-    k = NAN;
-    dk_dp = NAN;
-    dk_dT = NAN;
+    k = getNaN();
+    dk_dp = getNaN();
+    dk_dT = getNaN();
   }
   else
   {
@@ -585,13 +570,9 @@ NitrogenSBTLFluidProperties::rho_from_p_s(Real p, Real s) const
   double v, vt, e;
   const unsigned int ierr = PS_FLASH_N2(p * _to_MPa, s * _to_kJ, v, vt, e);
   if (ierr != I_OK)
-  {
-    v = NAN;
-    vt = NAN;
-    e = NAN;
-  }
-
-  return 1. / v;
+    return getNaN();
+  else
+    return 1. / v;
 }
 
 void
@@ -602,18 +583,19 @@ NitrogenSBTLFluidProperties::rho_from_p_s(
   const unsigned int ierr = PS_FLASH_N2(p * _to_MPa, s * _to_kJ, v, vt, e);
   if (ierr != I_OK)
   {
-    v = NAN;
-    vt = NAN;
-    e = NAN;
+    rho = getNaN();
+    drho_dp = getNaN();
+    drho_ds = getNaN();
   }
-
-  double dv_dp, dv_ds, dp_ds_v, de_dp, de_ds, dp_ds_e;
-  PS_FLASH_DERIV_N2(v, vt, e, dv_dp, dv_ds, dp_ds_v, de_dp, de_ds, dp_ds_e);
-
-  rho = 1. / v;
-  double drho_dv = -1. / v / v;
-  drho_dp = drho_dv * dv_dp / _to_Pa;
-  drho_ds = drho_dv * dv_ds / _to_J;
+  else
+  {
+    double dv_dp, dv_ds, dp_ds_v, de_dp, de_ds, dp_ds_e;
+    PS_FLASH_DERIV_N2(v, vt, e, dv_dp, dv_ds, dp_ds_v, de_dp, de_ds, dp_ds_e);
+    rho = 1. / v;
+    double drho_dv = -1. / v / v;
+    drho_dp = drho_dv * dv_dp / _to_Pa;
+    drho_ds = drho_dv * dv_ds / _to_J;
+  }
 }
 
 Real
