@@ -2,6 +2,7 @@
 #define NITROGENSBTLFLUIDPROPERTIES_H
 
 #include "SinglePhaseFluidProperties.h"
+#include "NaNInterface.h"
 
 class NitrogenSBTLFluidProperties;
 
@@ -20,7 +21,7 @@ InputParameters validParams<NitrogenSBTLFluidProperties>();
  * - dynamic viscosity:  Pa-s
  * - conductivity:       W/m-K
  */
-class NitrogenSBTLFluidProperties : public SinglePhaseFluidProperties
+class NitrogenSBTLFluidProperties : public SinglePhaseFluidProperties, public NaNInterface
 {
 public:
   NitrogenSBTLFluidProperties(const InputParameters & parameters);
