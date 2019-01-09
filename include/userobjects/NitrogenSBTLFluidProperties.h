@@ -65,6 +65,7 @@ public:
   virtual Real cp_from_p_T(Real p, Real T) const override;
   virtual Real cv_from_p_T(Real p, Real T) const override;
   virtual Real mu_from_p_T(Real p, Real T) const override;
+  virtual void mu_from_p_T(Real p, Real T, Real & mu, Real & dmu_dp, Real & dmu_dT) const override;
   virtual Real k_from_p_T(Real p, Real T) const override;
   virtual void k_from_p_T(Real p, Real T, Real & k, Real & dk_dp, Real & dk_dT) const override;
   virtual Real p_from_h_s(Real h, Real s) const override;
