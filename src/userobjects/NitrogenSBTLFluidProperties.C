@@ -1,5 +1,5 @@
 #include "NitrogenSBTLFluidProperties.h"
-#include "SBTL_N2.h"
+#include "contrib/libSBTL_Nitrogen/SBTL_N2.h"
 
 extern "C" double P_VU_N2(double v, double u);
 extern "C" double T_VU_N2(double v, double u);

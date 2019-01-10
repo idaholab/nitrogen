@@ -32,7 +32,7 @@ LIBSBTL_NITROGEN_objects   := $(patsubst %.cpp, %.$(obj-suffix), $(LIBSBTL_NITRO
 LIBSBTL_NITROGEN_deps      := $(patsubst %.$(obj-suffix), %.$(obj-suffix).d, $(LIBSBTL_NITROGEN_objects))
 LIBSBTL_NITROGEN_LIB       := $(LIBSBTL_NITROGEN_DIR)/libSBTL_Nitrogen-$(METHOD).la
 
-app_INCLUDES += -I$(LIBSBTL_NITROGEN_DIR)
+app_INCLUDES += -I$(NITROGEN_DIR)
 app_LIBS += $(LIBSBTL_NITROGEN_LIB)
 
 $(LIBSBTL_NITROGEN_LIB): $(LIBSBTL_NITROGEN_objects)
