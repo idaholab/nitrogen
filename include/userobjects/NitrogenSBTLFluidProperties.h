@@ -1,5 +1,4 @@
-#ifndef NITROGENSBTLFLUIDPROPERTIES_H
-#define NITROGENSBTLFLUIDPROPERTIES_H
+#pragma once
 
 #include "SinglePhaseFluidProperties.h"
 #include "NaNInterface.h"
@@ -94,5 +93,3 @@ protected:
   /// Conversion factor from kJ to J
   const Real _to_J;
 };
-
-#endif /* NITROGENSBTLFLUIDPROPERTIES_H */
