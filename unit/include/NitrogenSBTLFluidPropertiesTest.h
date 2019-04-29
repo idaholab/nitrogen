@@ -1,5 +1,4 @@
-#ifndef NITROGENSBTLFLUIDPROPERTIESTEST_H
-#define NITROGENSBTLFLUIDPROPERTIESTEST_H
+#pragma once
 
 #include "MooseObjectUnitTest.h"
 #include "NitrogenSBTLFluidProperties.h"
@@ -19,5 +18,3 @@ protected:
 
   const NitrogenSBTLFluidProperties * _fp;
 };
-
-#endif

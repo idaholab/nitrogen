@@ -1,5 +1,4 @@
-#ifndef NITROGENAPP_H
-#define NITROGENAPP_H
+#pragma once
 
 #include "MooseApp.h"
 
@@ -19,5 +18,3 @@ public:
 
 protected:
 };
-
-#endif /* NITROGENAPP_H */
