@@ -1,16 +1,19 @@
 Content:
-    - ${ROOT_DIR}/doc/content
-    - ${MOOSE_DIR}/framework/doc/content
-    - ${MOOSE_DIR}/modules/fluid_properties/doc/content
+    notrogen:
+        root_dir: doc/content
+    framework:
+        root_dir: ${MOOSE_DIR}/framework/doc/content
+    fluid_properties:
+        root_dir: ${MOOSE_DIR}/modules/fluid_properties/doc/content
 
 Renderer:
     type: MooseDocs.base.MaterializeRenderer
-    name: nitrogen
-    repo: https://hpcgitlab.inl.gov/idaholab/nitrogen
-    home: https://hpcsc.inl.gov/ssl/NITROGEN/site/index.html
 
 Extensions:
     MooseDocs.extensions.navigation:
+        name: nitrogen
+        repo: https://hpcgitlab.inl.gov/idaholab/nitrogen
+        home: https://hpcsc.inl.gov/ssl/NITROGEN/site/index.html
         menu:
             Developers:
                 Workflow: workflow.md
