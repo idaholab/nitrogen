@@ -72,12 +72,11 @@ DIFF_U_VP_N2(double v, double p, double & u, double & dudv_p, double & dudp_v, d
 
 registerMooseObject("NitrogenApp", NitrogenSBTLFluidProperties);
 
-template <>
 InputParameters
-validParams<NitrogenSBTLFluidProperties>()
+NitrogenSBTLFluidProperties::validParams()
 {
-  InputParameters params = validParams<SinglePhaseFluidProperties>();
-  params += validParams<NaNInterface>();
+  InputParameters params = SinglePhaseFluidProperties::validParams();
+  params += NaNInterface::validParams();
   params.addClassDescription("Fluid properties of nitrogen (gas phase).");
   return params;
 }
