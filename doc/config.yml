@@ -1,5 +1,5 @@
 Content:
-    notrogen:
+    nitrogen:
         root_dir: doc/content
     framework:
         root_dir: ${MOOSE_DIR}/framework/doc/content
@@ -20,9 +20,6 @@ Extensions:
                 Build Status: https://moosebuild.inl.gov/repo/idaholab/nitrogen
     MooseDocs.extensions.appsyntax:
         executable: ${ROOT_DIR}
-        hide:
-            framework: !include ${MOOSE_DIR}/framework/doc/hidden.yml
-            fluid_properties: !include ${MOOSE_DIR}/modules/fluid_properties/doc/hidden.yml
         includes:
             - include
             - ${MOOSE_DIR}/framework/include
