@@ -1,0 +1,6 @@
+dependencies:
+    - framework
+    - fluid_properties
+repos:
+    default: https://hpcgitlab.hpc.inl.gov/idaholab/nitrogen
+reports: !include ${NITROGEN_DIR}/doc/sqa_reports.yml
