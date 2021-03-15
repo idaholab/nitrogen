@@ -1,0 +1,26 @@
+Applications:
+    nitrogen:
+        app_types:
+            - NitrogenApp
+        content_directory: ${NITROGEN_DIR}/doc/content
+        remove:
+            - ${MOOSE_DIR}/framework/doc/remove.yml
+        log_default: WARNING
+        show_warning: false
+
+Documents:
+    software_requirements_specification: sqa/nitrogen_srs.md
+    software_design_description: sqa/nitrogen_sdd.md
+    software_test_plan: sqa/nitrogen_stp.md
+    requirements_traceablity_matrix: sqa/nitrogen_rtm.md
+    verification_validation_report: sqa/nitrogen_vvr.md
+    failure_analysis_report: sqa/nitrogen_far.md
+    log_default: WARNING
+    show_warning: false
+
+Requirements:
+    nitrogen:
+        directories:
+            - ${NITROGEN_DIR}/test
+        log_default: WARNING
+        show_warning: false
