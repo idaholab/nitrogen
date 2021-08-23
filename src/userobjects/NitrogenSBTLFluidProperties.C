@@ -201,6 +201,15 @@ NitrogenSBTLFluidProperties::cv_from_v_e(Real v, Real e) const
   return CV_VU_N2(v, e * _to_kJ) * _to_J;
 }
 
+void
+NitrogenSBTLFluidProperties::cv_from_v_e(
+    Real v, Real e, Real & cv, Real & dcv_dv, Real & dcv_de) const
+{
+  cv = cv_from_v_e(v, e);
+  dcv_dv = 0;
+  dcv_de = 0;
+}
+
 Real
 NitrogenSBTLFluidProperties::mu_from_v_e(Real v, Real e) const
 {
