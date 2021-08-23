@@ -60,6 +60,8 @@ extern "C" void
 DIFF_S_VU_N2(double v, double u, double & s, double & dsdv, double & dsdu, double & dudv);
 extern "C" void
 DIFF_W_VU_N2(double v, double u, double & c, double & dcdv, double & dcdu, double & dudv);
+extern "C" void DIFF_LAMBDA_VU_N2(
+    double v, double u, double & lambda, double & dlambdadv, double & dlambdadu, double & dudv);
 extern "C" void DIFF_LAMBDA_VU_N2_T(double vt,
                                     double v,
                                     double u,
@@ -219,6 +221,14 @@ Real
 NitrogenSBTLFluidProperties::k_from_v_e(Real v, Real e) const
 {
   return LAMBDA_VU_N2(v, e * _to_kJ);
+}
+
+void
+NitrogenSBTLFluidProperties::k_from_v_e(Real v, Real e, Real & k, Real & dk_dv, Real & dk_de) const
+{
+  double dudv;
+  DIFF_LAMBDA_VU_N2(v, e * _to_kJ, k, dk_dv, dk_de, dudv);
+  dk_de *= 1 / _to_J;
 }
 
 Real

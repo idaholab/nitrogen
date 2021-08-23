@@ -78,6 +78,7 @@ TEST_F(NitrogenSBTLFluidPropertiesTest, test)
   // TODO: REL_TEST(k, k_external, REL_TOL_EXTERNAL_VALUE);
   REL_TEST(k, 0.032359520000923896, REL_TOL_SAVED_VALUE);
   REL_TEST(_fp->k_from_p_T(p, T), 0.032359520000923896, REL_TOL_SAVED_VALUE);
+  DERIV_TEST(_fp->k_from_v_e, v, e, REL_TOL_DERIVATIVE);
   DERIV_TEST(_fp->k_from_p_T, p, T, REL_TOL_DERIVATIVE);
 
   // s
