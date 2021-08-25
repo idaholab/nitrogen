@@ -246,10 +246,19 @@ void
 NitrogenSBTLFluidProperties::mu_from_v_e(
     Real v, Real e, Real & mu, Real & dmu_dv, Real & dmu_de) const
 {
+  double dv = 1e-5 * v;
+  static const double de = 1e-2;
+  double mu1, mu2;
+
   mu = mu_from_v_e(v, e);
-  // currently there is no API for derivatives in SBTL package
-  dmu_dv = 0;
-  dmu_de = 0;
+
+  mu1 = mu_from_v_e(v - dv, e);
+  mu2 = mu_from_v_e(v + dv, e);
+  dmu_dv = (mu2 - mu1) / (2. * dv);
+
+  mu1 = mu_from_v_e(v, e - de);
+  mu2 = mu_from_v_e(v, e + de);
+  dmu_de = (mu2 - mu1) / (2. * de);
 }
 
 Real
