@@ -190,9 +190,22 @@ void
 NitrogenSBTLFluidProperties::cp_from_v_e(
     Real v, Real e, Real & cp, Real & dcp_dv, Real & dcp_de) const
 {
+  double dv = 1e-4 * v;
+  static const double de = 1e-3;
+  double cp1, cp2;
+
   cp = cp_from_v_e(v, e);
-  dcp_dv = 0;
-  dcp_de = 0;
+
+  // Centered numerical derivatives are used here.
+  // cp is a first order derivative of the second order spline polynomials
+  // already.
+  cp1 = cp_from_v_e(v - dv, e);
+  cp2 = cp_from_v_e(v + dv, e);
+  dcp_dv = (cp2 - cp1) / (2. * dv);
+
+  cp1 = cp_from_v_e(v, e - de);
+  cp2 = cp_from_v_e(v, e + de);
+  dcp_de = (cp2 - cp1) / (2. * de);
 }
 
 Real

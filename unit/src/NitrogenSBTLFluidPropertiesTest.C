@@ -55,6 +55,7 @@ TEST_F(NitrogenSBTLFluidPropertiesTest, test)
   // TODO: REL_TEST(cp, cp_external, REL_TOL_EXTERNAL_VALUE);
   REL_TEST(cp, 1044.4798895600907, REL_TOL_SAVED_VALUE);
   REL_TEST(_fp->cp_from_p_T(p, T), 1044.4798895600907, REL_TOL_SAVED_VALUE);
+  DERIV_TEST(_fp->cp_from_v_e, v, e, 0.0001); // allow 0.01% here (numerical derivative)
 
   // cv
   const Real cv = _fp->cv_from_v_e(v, e);
