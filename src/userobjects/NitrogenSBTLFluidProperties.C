@@ -60,6 +60,8 @@ extern "C" void
 DIFF_S_VU_N2(double v, double u, double & s, double & dsdv, double & dsdu, double & dudv);
 extern "C" void
 DIFF_W_VU_N2(double v, double u, double & c, double & dcdv, double & dcdu, double & dudv);
+extern "C" void DIFF_LAMBDA_VU_N2(
+    double v, double u, double & lambda, double & dlambdadv, double & dlambdadu, double & dudv);
 extern "C" void DIFF_LAMBDA_VU_N2_T(double vt,
                                     double v,
                                     double u,
@@ -188,15 +190,50 @@ void
 NitrogenSBTLFluidProperties::cp_from_v_e(
     Real v, Real e, Real & cp, Real & dcp_dv, Real & dcp_de) const
 {
+  double dv = 1e-4 * v;
+  static const double de = 1e-3;
+  double cp1, cp2;
+
   cp = cp_from_v_e(v, e);
-  dcp_dv = 0;
-  dcp_de = 0;
+
+  // Centered numerical derivatives are used here.
+  // cp is a first order derivative of the second order spline polynomials
+  // already.
+  cp1 = cp_from_v_e(v - dv, e);
+  cp2 = cp_from_v_e(v + dv, e);
+  dcp_dv = (cp2 - cp1) / (2. * dv);
+
+  cp1 = cp_from_v_e(v, e - de);
+  cp2 = cp_from_v_e(v, e + de);
+  dcp_de = (cp2 - cp1) / (2. * de);
 }
 
 Real
 NitrogenSBTLFluidProperties::cv_from_v_e(Real v, Real e) const
 {
   return CV_VU_N2(v, e * _to_kJ) * _to_J;
+}
+
+void
+NitrogenSBTLFluidProperties::cv_from_v_e(
+    Real v, Real e, Real & cv, Real & dcv_dv, Real & dcv_de) const
+{
+  double dv = 1e-5 * v;
+  static const double de = 1e-2;
+  double cv1, cv2;
+
+  cv = cv_from_v_e(v, e);
+
+  // Centered numerical derivatives are used here.
+  // cv is a first order derivative of the second order spline polynomials
+  // already.
+  cv1 = cv_from_v_e(v - dv, e);
+  cv2 = cv_from_v_e(v + dv, e);
+  dcv_dv = (cv2 - cv1) / (2. * dv);
+
+  cv1 = cv_from_v_e(v, e - de);
+  cv2 = cv_from_v_e(v, e + de);
+  dcv_de = (cv2 - cv1) / (2. * de);
 }
 
 Real
@@ -209,16 +246,33 @@ void
 NitrogenSBTLFluidProperties::mu_from_v_e(
     Real v, Real e, Real & mu, Real & dmu_dv, Real & dmu_de) const
 {
+  double dv = 1e-5 * v;
+  static const double de = 1e-2;
+  double mu1, mu2;
+
   mu = mu_from_v_e(v, e);
-  // currently there is no API for derivatives in SBTL package
-  dmu_dv = 0;
-  dmu_de = 0;
+
+  mu1 = mu_from_v_e(v - dv, e);
+  mu2 = mu_from_v_e(v + dv, e);
+  dmu_dv = (mu2 - mu1) / (2. * dv);
+
+  mu1 = mu_from_v_e(v, e - de);
+  mu2 = mu_from_v_e(v, e + de);
+  dmu_de = (mu2 - mu1) / (2. * de);
 }
 
 Real
 NitrogenSBTLFluidProperties::k_from_v_e(Real v, Real e) const
 {
   return LAMBDA_VU_N2(v, e * _to_kJ);
+}
+
+void
+NitrogenSBTLFluidProperties::k_from_v_e(Real v, Real e, Real & k, Real & dk_dv, Real & dk_de) const
+{
+  double dudv;
+  DIFF_LAMBDA_VU_N2(v, e * _to_kJ, k, dk_dv, dk_de, dudv);
+  dk_de *= 1 / _to_J;
 }
 
 Real
