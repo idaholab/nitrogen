@@ -75,7 +75,7 @@ SBTLAPI double __stdcall U_VH_N2_INI_T(double vt, double h) throw()
         if(i>123) i=123;
     } else if(vt<x1_sub_RS_1) {
         x1f=(vt-x1_sub_RS_0)*dist_x1_inv_0;
-        if(x1f>0.) i=_mm_cvttsd_si32(_mm_load_sd(&x1f));
+        if(x1f>0.) i=IROUND(x1f);
         else i=0;
     } else {
         i=49;
