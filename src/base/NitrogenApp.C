@@ -47,5 +47,5 @@ NitrogenApp::registerAll(Factory & f, ActionFactory & af, Syntax & s)
   Registry::registerObjectsTo(f, {"NitrogenApp"});
   Registry::registerActionsTo(af, {"NitrogenApp"});
 
-  ModulesApp::registerAll(f, af, s);
+  ModulesApp::registerAllObjects<NitrogenApp>(f, af, s);
 }
