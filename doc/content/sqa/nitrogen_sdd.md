@@ -1,4 +1,4 @@
-!template load file=sqa/app_sdd.md.template app=NitrogenApp category=nitrogen
+!template load file=sqa/app_sdd.md.template app=Nitrogen category=nitrogen
 
 Nitrogen properties are computed within a fluid property user object. Fluid properties user objects derive
 from base classes defined in the MOOSE fluid properties module. These base classes define interfaces that other
