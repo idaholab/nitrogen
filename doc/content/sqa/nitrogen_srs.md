@@ -1,4 +1,4 @@
-!template load file=sqa/app_srs.md.template app=NitrogenApp category=nitrogen
+!template load file=sqa/app_srs.md.template app=Nitrogen category=nitrogen
 
 
 !template! item key=system-purpose

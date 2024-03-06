@@ -1,1 +1,1 @@
-!template load file=sqa/app_stp.md.template app=NitrogenApp category=nitrogen
+!template load file=sqa/app_stp.md.template app=Nitrogen category=nitrogen
