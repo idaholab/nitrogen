@@ -73,6 +73,7 @@ include/base/NitrogenRevision.h
 include/NitrogenRevision.h
 build
 .tags
+nitrogen.yaml
 
 # Allow output files in gold directories
 !**/gold/*.e
