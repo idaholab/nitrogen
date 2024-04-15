@@ -13,7 +13,9 @@
 #include "AppFactory.h"
 
 // Modules
+#ifndef SKIP_MODULE_LOAD
 #include "ModulesApp.h"
+#endif
 
 InputParameters
 NitrogenApp::validParams()
@@ -56,5 +58,8 @@ NitrogenApp::registerAll(Factory & f, ActionFactory & af, Syntax & s)
   Registry::registerObjectsTo(f, {"NitrogenApp"});
   Registry::registerActionsTo(af, {"NitrogenApp"});
 
+  libmesh_ignore(s);
+#ifndef SKIP_MODULE_LOAD
   ModulesApp::registerAllObjects<NitrogenApp>(f, af, s);
+#endif
 }
