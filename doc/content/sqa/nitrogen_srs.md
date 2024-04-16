@@ -42,6 +42,22 @@ at all times. Known regressions will be recorded and tracked (see [#maintainabil
 independent and satisfactory resolution.
 !template-end!
 
+!template! item key=maintainability
+!! maintainability-begin
+
+- The latest working version (defined as the version that passes all tests in the current regression
+  test suite) shall be publicly available at all times through the repository host provider.
+- Flaws identified in the system shall be reported and tracked in a ticket or issue based system. The
+  technical lead will determine the severity and priority of all reported issues and assign resources
+  at their discretion to resolve identified issues.
+- The software maintainers will entertain all proposed changes to the system in a timely manner
+  (within five business days).
+- The fluid property in its entirety will be made publicly available under the [!ac](LGPL)
+  version 2.0 license.
+
+!! maintainability-finish
+!template-end!
+
 !template! item key=information-management
 The {{app}} application and all dependencies in their entirety will be made available on an appropriate
 repository hosting site accessible to {{app}} licensees, commensurate to their access level. Day-to-day
