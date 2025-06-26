@@ -27,7 +27,7 @@ NitrogenApp::validParams()
 
 registerKnownLabel("NitrogenApp");
 
-NitrogenApp::NitrogenApp(InputParameters parameters) : MooseApp(parameters)
+NitrogenApp::NitrogenApp(const InputParameters & parameters) : MooseApp(parameters)
 {
   NitrogenApp::registerAll(_factory, _action_factory, _syntax);
 }

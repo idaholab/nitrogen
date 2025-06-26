@@ -16,7 +16,7 @@ class Factory;
 class NitrogenApp : public MooseApp
 {
 public:
-  NitrogenApp(InputParameters parameters);
+  NitrogenApp(const InputParameters & parameters);
 
 public:
   static InputParameters validParams();
